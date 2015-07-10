@@ -15,7 +15,7 @@ TARGET = main
 
 # List C source files here. (C dependencies are automatically generated.)
 SRC = $(TARGET).c \
-		I2C_master.c
+		i2c_master.c
 
 
 # List Assembler source files here.
