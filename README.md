@@ -110,17 +110,17 @@ This function is used to read one byte from a device an then not requesting anot
 byte and therefore stopping the current transmission.
 This function returns the received byte.
 
-### uint8_t i2c_transmit(uint8_t address, uint8_t* data, uint16_t length);
+#### uint8_t i2c_transmit(uint8_t address, uint8_t* data, uint16_t length);
 This function is used to transmit [length] number of bytes to an I2C device with the given
 I2C address from [data].
 The [address] passed to this function is the 7-bit slave address, left
-shifted by one bit (i.e. 7-bit slave address is 0x2F -> (0x2F)<<1 = 0x5E)
+shifted by one bit (i.e. 7-bit slave address is `0x2F` -> `(0x2F)<<1` = `0x5E`)
 
-### uint8_t i2c_receive(uint8_t address, uint8_t* data, uint16_t length);
+#### uint8_t i2c_receive(uint8_t address, uint8_t* data, uint16_t length);
 This function is used to read [length] number of bytes from the I2C device with the given
 I2C address into the [data].
 The [address] passed to this function is the 7-bit slave address, left
-shifted by one bit (i.e. 7-bit slave address is 0x2F -> (0x2F)<<1 = 0x5E)
+shifted by one bit (i.e. 7-bit slave address is `0x2F` -> `(0x2F)<<1` = `0x5E`)
 
 ##### void I2C_stop(void)
 This function disables the TWI peripheral completely
