@@ -16,14 +16,16 @@ void i2c_init(void)
 	TWBR = (uint8_t)TWBR_val;
 }
 
-uint8_t i2c_start(uint8_t address)
+uint8_t i2c_start(uint8_t address, uint16_t timeout)
 {
 	// reset TWI control register
 	TWCR = 0;
 	// transmit START condition 
 	TWCR = (1<<TWINT) | (1<<TWSTA) | (1<<TWEN);
+	// store the timeout
+	uint16_t atimeout = timeout;
 	// wait for end of transmission
-	while( !(TWCR & (1<<TWINT)) );
+	while( !(TWCR & (1<<TWINT)) && (atimeout--) > 0);
 	
 	// check if the start condition was successfully transmitted
 	if((TWSR & 0xF8) != TW_START){ return 1; }
@@ -33,7 +35,7 @@ uint8_t i2c_start(uint8_t address)
 	// start transmission of address
 	TWCR = (1<<TWINT) | (1<<TWEN);
 	// wait for end of transmission
-	while( !(TWCR & (1<<TWINT)) );
+	while( !(TWCR & (1<<TWINT)) && (timeout--) > 0);
 	
 	// check if the device has acknowledged the READ / WRITE mode
 	uint8_t twst = TW_STATUS & 0xF8;
@@ -42,38 +44,38 @@ uint8_t i2c_start(uint8_t address)
 	return 0;
 }
 
-uint8_t i2c_write(uint8_t data)
+uint8_t i2c_write(uint8_t data, uint16_t timeout)
 {
 	// load data into data register
 	TWDR = data;
 	// start transmission of data
 	TWCR = (1<<TWINT) | (1<<TWEN);
 	// wait for end of transmission
-	while( !(TWCR & (1<<TWINT)) );
+	while( !(TWCR & (1<<TWINT)) && (timeout--) > 0);
 	
 	if( (TWSR & 0xF8) != TW_MT_DATA_ACK ){ return 1; }
 	
 	return 0;
 }
 
-uint8_t i2c_read_ack(void)
+uint8_t i2c_read_ack(uint16_t timeout)
 {
 	
 	// start TWI module and acknowledge data after reception
 	TWCR = (1<<TWINT) | (1<<TWEN) | (1<<TWEA); 
 	// wait for end of transmission
-	while( !(TWCR & (1<<TWINT)) );
+	while( !(TWCR & (1<<TWINT))  && (timeout--) > 0);
 	// return received data from TWDR
 	return TWDR;
 }
 
-uint8_t i2c_read_nack(void)
+uint8_t i2c_read_nack(uint16_t timeout)
 {
 	
 	// start receiving without acknowledging reception
 	TWCR = (1<<TWINT) | (1<<TWEN);
 	// wait for end of transmission
-	while( !(TWCR & (1<<TWINT)) );
+	while( !(TWCR & (1<<TWINT))  && (timeout--) > 0);
 	// return received data from TWDR
 	return TWDR;
 }
